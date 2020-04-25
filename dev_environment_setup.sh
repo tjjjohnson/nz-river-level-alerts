@@ -20,8 +20,6 @@ rm -r lib/*
 
 pip3 install -r requirements.txt -t lib
 
-
-
 export PYTHONPATH=${PYTHONPATH}:${PWD}/lib
 
 export PATH=${PATH}:${PWD}/bin
