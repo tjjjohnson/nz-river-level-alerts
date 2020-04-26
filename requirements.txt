@@ -1,7 +1,7 @@
 selenium==3.13.0
 #chromedriver-binary==2.37.0
-boto3==1.6.18 # already on AWS lambda
-botocore==1.9.18 # already on AWS lambda
+#boto3==1.6.18 # already on AWS lambda
+#botocore==1.9.18 # already on AWS lambda
 bs4
 pandas
 lxml

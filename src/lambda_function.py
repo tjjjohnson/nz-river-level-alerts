@@ -52,7 +52,7 @@ def get_river_levels_df():
 def alert_messsage(alert):
     return f"{alert['Location']} is {alert['Direction']} {alert['Level']}m \n"
 
-def river_level_alerts(event, context):
+def lambda_function(event, context):
     alerts=[
         { 'Location' : 'Tauranga-Taupo Te Kono off Kiko Road on Tauranga-Taupo River', 'Direction' : 'above', 'Level': 0.5 },
         { 'Location' : 'Whareroa Whareroa at FishTrap', 'Direction': 'below', 'Level': 0.7}
@@ -87,4 +87,4 @@ def river_level_alerts(event, context):
     return response
 
 if __name__ == "__main__":
-   river_level_alerts(None, None)
+   lambda_function(None, None)
