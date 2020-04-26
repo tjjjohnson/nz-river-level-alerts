@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
+#code is based on ...
 #https://medium.com/@manivannan_data/python-selenium-on-aws-lambda-b4b9de44b8e1
-
 #https://github.com/ManivannanMurugavel/selenium-python-aws-lambda
 
-# https://medium.com/hackernoon/running-selenium-and-headless-chrome-on-aws-lambda-layers-python-3-6-bd810503c6c3
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -109,9 +108,6 @@ def lambda_handler(event, context):
 
 if __name__ == "__main__":
    lambda_handler(None, None)
-   # https://github.com/thigley986/Lambda-AWS-SES-Send-Email/blob/master/SendEmail.py
-   #https://aws.amazon.com/premiumsupport/knowledge-center/lambda-send-email-ses/
-
    
 
    
