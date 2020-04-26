@@ -7,6 +7,8 @@ then run `./lambda_function.py`
 
 # Lambda setup
 
+`make update-lambda`
+
 ## Environment variables
 
 RIVER_LEVEL_ALERTS_EMAIL_ADDRESS=email_address

@@ -23,9 +23,9 @@ build-lambda:
 
 	aws s3 cp nz-river-level-alerts.zip	 s3://river-level-alerts/
 
-	
-
-	echo "https://river-level-alerts.s3.amazonaws.com/nz-river-level-alerts.zip"
 	rm -rf build
+
+update-lambda: build-lambda
+	aws lambda update-function-code --function-name river-level-alerts --s3-bucket river-level-alerts --s3-key nz-river-level-alerts.zip
 
 
