@@ -29,6 +29,6 @@ export PYTHONPATH=${PYTHONPATH}:${PWD}/lib
 export PATH=${PATH}:${PWD}/bin
 
 # trying to fix 127 error
-sudo yum install mesa-libOSMesa-devel
+sudo yum install -y mesa-libOSMesa-devel
 sudo yum install -y libX11
 sudo yum install -y fontconfig
