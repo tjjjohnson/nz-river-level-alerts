@@ -10,8 +10,9 @@ from selenium.webdriver.chrome.options import Options
 import os
 import pandas as pd
 from bs4 import BeautifulSoup
-
+import bios
 import boto3
+import shutil
 
 def get_river_levels_df():
     options = Options()
@@ -54,9 +55,26 @@ def alert_messsage(alert):
     return f"{alert['Location']} is {alert['Direction']} {alert['Level']}m \n"
 
 def lambda_handler(event, context):
-    alerts=[
-        { 'Location' : 'Tauranga-Taupo Te Kono off Kiko Road on Tauranga-Taupo River', 'Direction' : 'above', 'Level': 0.5 }
-    ]
+    # copy river level alerts yaml from s3 using RIVER_LEVEL_ALERTS_
+    rules_tmp_file = '/tmp/river-level-alerts-rules.yaml'
+
+    if 'RIVER_LEVEL_ALERTS_RULES_YAML' in os.environ:
+        print(f"Using rules from environment variable RIVER_LEVEL_ALERTS_RULES_YAML={os.environ['RIVER_LEVEL_ALERTS_RULES_YAML']}")
+        if os.environ['RIVER_LEVEL_ALERTS_RULES_YAML'].startswith('s3://'):
+            s3_path = os.environ['RIVER_LEVEL_ALERTS_RULES_YAML'][5:]
+            s3_components = s3_path.split('/')
+            bucket = s3_components[0]
+            s3_key = '/'.join(s3_components[1:])
+            s3 = boto3.resource('s3')
+            s3.Bucket(bucket).download_file(s3_key, rules_tmp_file)
+        else:
+            shutil.copyfile(os.environ['RIVER_LEVEL_ALERTS_RULES_YAML'], rules_tmp_file )
+    else:
+        print("Using default rules from example_alert_rules.yaml, override with RIVER_LEVEL_ALERTS_RULES_YAML which can read from s3 using s3://some_bucket/your_rules.yaml")
+        shutil.copyfile('example_alert_rules.yaml', rules_tmp_file)
+
+    alerts = bios.read(rules_tmp_file)
+    print(alerts)
 
     df = get_river_levels_df()
     print(df)
@@ -64,40 +82,39 @@ def lambda_handler(event, context):
     messages=""
 
     for alert in alerts:
-        print(df[df['Location'] == alert['Location']])
         level_for_location = df[df['Location'] == alert['Location']]['Level'].values[0]
         if alert['Direction'] == 'above':
             if level_for_location > alert['Level']:
-                print("Above")
                 messages += alert_messsage(alert)
         elif alert['Direction'] == 'below':
             if level_for_location < alert['Level']:
-                print("Below")
                 messages += alert_messsage(alert)
         else:
             print(f"alert for {alert['Location']} has invalid direction {alert['Direction']}")
+            os.sys.exit(1)
 
     print(messages)
 
-    ses = boto3.client('ses')
-    response = ses.send_email(
-        Source = os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
-        Destination={
-            'ToAddresses': [
-                os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
-            ]
-        },
-        Message={
-            'Subject': {
-                'Data': 'River level alert'
+    if messages != "":
+        ses = boto3.client('ses')
+        response = ses.send_email(
+            Source = os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
+            Destination={
+                'ToAddresses': [
+                    os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
+                ]
             },
-            'Body': {
-                'Text': {
-                    'Data': messages
+            Message={
+                'Subject': {
+                    'Data': 'River level alert'
+                },
+                'Body': {
+                    'Text': {
+                        'Data': messages
+                    }
                 }
             }
-        }
-    )
+        )
 
     response = {
         "statusCode": 200,
