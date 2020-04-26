@@ -2,6 +2,7 @@ lib/
 bin/
 build/
 build.zip
+nz-river-level-alerts.zip
 
 # package directories
 node_modules

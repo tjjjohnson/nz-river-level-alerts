@@ -18,6 +18,9 @@ sudo yum install -y python3-pip
 mkdir --parents lib bin
 rm -r lib/*
 
+curl -SL https://github.com/ManivannanMurugavel/selenium-python-aws-lambda/raw/master/lib/libORBit-2.so.0 > lib/libORBit-2.so.0
+curl -SL https://github.com/ManivannanMurugavel/selenium-python-aws-lambda/raw/master/lib/libgconf-2.so.4 > lib/libgconf-2.so.4
+
 pip3 install -r requirements.txt -t lib
 
 export PYTHONPATH=${PYTHONPATH}:${PWD}/lib
