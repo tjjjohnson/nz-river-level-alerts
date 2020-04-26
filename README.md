@@ -31,3 +31,5 @@ By default the rules will be taken from `example_alert_rules.yaml` but you shoul
   Direction: above
   Level: 0.5
 ```
+
+For the lambda function to read from S3 it will need to have the appropriate policy attached to its role. See https://aws.amazon.com/premiumsupport/knowledge-center/lambda-execution-role-s3-bucket/

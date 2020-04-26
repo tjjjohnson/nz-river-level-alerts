@@ -14,7 +14,7 @@ build-lambda:
 	unzip -o lambda_function.zip -d build/
 	rm lambda_function.zip
 
-	cp -r src/lambda_function.py build/.
+	cp -r src/* build/.
 	
 	rm -r build/pip build/*dist-info
 
