@@ -12,6 +12,8 @@ import os
 import pandas as pd
 from bs4 import BeautifulSoup
 
+import boto3
+
 def get_river_levels_df():
     options = Options()
     options.binary_location = os.path.join(os.getcwd(), 'bin', 'headless-chromium')
@@ -79,6 +81,26 @@ def lambda_handler(event, context):
 
     print(messages)
 
+    ses = boto3.client('ses')
+    response = ses.send_email(
+        Source = os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
+        Destination={
+            'ToAddresses': [
+                os.environ['RIVER_LEVEL_ALERTS_EMAIL_ADDRESS'],
+            ]
+        },
+        Message={
+            'Subject': {
+                'Data': 'River level alert'
+            },
+            'Body': {
+                'Text': {
+                    'Data': messages
+                }
+            }
+        }
+    )
+
     response = {
         "statusCode": 200,
         "body": messages
@@ -87,4 +109,10 @@ def lambda_handler(event, context):
     return response
 
 if __name__ == "__main__":
-   lambda_function(None, None)
+   lambda_handler(None, None)
+   # https://github.com/thigley986/Lambda-AWS-SES-Send-Email/blob/master/SendEmail.py
+   #https://aws.amazon.com/premiumsupport/knowledge-center/lambda-send-email-ses/
+
+   
+
+   

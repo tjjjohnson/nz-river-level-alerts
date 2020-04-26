@@ -1,4 +1,5 @@
 build-lambda:
+	rm -rf build
 	mkdir --parents build build/lib
 
 	cp -r bin build/.
@@ -15,13 +16,16 @@ build-lambda:
 
 	cp -r src/lambda_function.py build/.
 	
+	rm -r build/pip build/*dist-info
 
-	$(cd  build; zip -9qr nz-river-level-alerts.zip .)
+	bash -c 'cd  build; zip -9qr nz-river-level-alerts.zip .'
 	mv build/nz-river-level-alerts.zip .
 
 	aws s3 cp nz-river-level-alerts.zip	 s3://river-level-alerts/
 
+	
+
 	echo "https://river-level-alerts.s3.amazonaws.com/nz-river-level-alerts.zip"
-	#rm -rf build
+	rm -rf build
 
 
