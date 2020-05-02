@@ -15,6 +15,7 @@ build-lambda:
 	rm lambda_function.zip
 
 	cp -r src/* build/.
+	cp example_alert_rules.yaml build/.
 	
 	rm -r build/pip build/*dist-info
 

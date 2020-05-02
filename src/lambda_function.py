@@ -51,8 +51,8 @@ def get_river_levels_df():
 
     return df
 
-def alert_messsage(alert):
-    return f"{alert['Location']} is {alert['Direction']} {alert['Level']}m \n"
+def alert_messsage(alert, current_level):
+    return f"{alert['Location']} is at {current_level} which is {alert['Direction']} {alert['Level']}m \n"
 
 def lambda_handler(event, context):
     # copy river level alerts yaml from s3 using RIVER_LEVEL_ALERTS_
@@ -85,13 +85,15 @@ def lambda_handler(event, context):
         level_for_location = df[df['Location'] == alert['Location']]['Level'].values[0]
         if alert['Direction'] == 'above':
             if level_for_location > alert['Level']:
-                messages += alert_messsage(alert)
+                messages += alert_messsage(alert, level_for_location)
         elif alert['Direction'] == 'below':
             if level_for_location < alert['Level']:
-                messages += alert_messsage(alert)
+                messages += alert_messsage(alert, level_for_location)
         else:
             print(f"alert for {alert['Location']} has invalid direction {alert['Direction']}")
             os.sys.exit(1)
+
+    messages += 'https://www.waikatoregion.govt.nz/services/regional-services/river-levels-and-rainfall/river-levels-and-flow-latest-reading/'
 
     print(messages)
 
